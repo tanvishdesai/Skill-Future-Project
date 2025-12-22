@@ -1,0 +1,14 @@
+pandas
+numpy
+scikit-learn
+xgboost
+matplotlib
+seaborn
+shap
+fastapi
+uvicorn
+joblib
+python-multipart
+jinja2
+google-generativeai
+python-dotenv
