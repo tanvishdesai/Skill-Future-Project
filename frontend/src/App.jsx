@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import DiseaseForm from './components/DiseaseForm';
 import ResultCard from './components/ResultCard';
+import PlotsGallery from './components/PlotsGallery';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('Heart'); // 'Heart', 'Liver', or 'ECG'
+  const [activeTab, setActiveTab] = useState('Heart'); // 'Heart', 'Liver', 'ECG', 'Performance'
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -54,18 +55,18 @@ function App() {
 
         {/* Tab Switcher */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white p-1 rounded-xl shadow-md inline-flex">
-            {['Heart', 'Liver', 'ECG'].map((tab) => (
+          <div className="bg-white p-1 rounded-xl shadow-md inline-flex flex-wrap justify-center">
+            {['Heart', 'Liver', 'ECG', 'Performance'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => switchTab(tab)}
-                className={`px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   activeTab === tab
                     ? 'bg-indigo-600 text-white shadow-lg'
                     : 'text-gray-500 hover:text-indigo-600'
                 }`}
               >
-                {tab === 'ECG' ? 'ECG Heartbeat' : `${tab} Disease`}
+                {tab === 'ECG' ? 'ECG Heartbeat' : tab === 'Performance' ? 'Model Performance' : `${tab} Disease`}
               </button>
             ))}
           </div>
@@ -85,6 +86,8 @@ function App() {
               <p className="text-xl text-gray-600 font-medium">Analyzing parameters...</p>
               <p className="text-sm text-gray-500 mt-2">Consulting Gemini AI for explanation...</p>
             </div>
+          ) : activeTab === 'Performance' ? (
+            <PlotsGallery />
           ) : result ? (
             <ResultCard result={result} onReset={handleReset} />
           ) : (
