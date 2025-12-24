@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 class HeartDiseaseInput(BaseModel):
     Age: int
@@ -25,3 +25,8 @@ class LiverDiseaseInput(BaseModel):
     Total_Protiens: float
     Albumin: float
     Albumin_and_Globulin_Ratio: float
+
+class ECGInput(BaseModel):
+    ecg_signal: Optional[List[float]] = None  # 187-point ECG signal
+    sample_type: Optional[str] = None  # 'normal' or 'arrhythmia_ventricular' for demo
+

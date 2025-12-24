@@ -124,20 +124,71 @@ const LiverFields = () => (
   </>
 );
 
+const ECGFields = () => (
+  <>
+    <div className="space-y-6">
+      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+        <p className="text-sm text-blue-700">
+          <strong>ECG Signal Input:</strong> Select a sample ECG signal or provide your own 187-point signal data.
+          The model analyzes single heartbeat waveforms to classify cardiac rhythm patterns.
+        </p>
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Select Sample ECG Signal</label>
+        <select 
+          name="sample_type" 
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          defaultValue="normal"
+        >
+          <option value="normal">Normal Heartbeat (N)</option>
+          <option value="arrhythmia_ventricular">Ventricular Arrhythmia (V)</option>
+        </select>
+      </div>
+
+      <div className="border-t pt-4">
+        <p className="text-xs text-gray-500 mb-2">
+          ℹ️ In production, this would integrate with ECG hardware or file upload for real patient data.
+        </p>
+      </div>
+    </div>
+  </>
+);
+
 const DiseaseForm = ({ diseaseType, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
     
-    // Type conversion
-    for (const key in data) {
-        if (!isNaN(data[key]) && data[key] !== '') {
-            data[key] = data[key].includes('.') ? parseFloat(data[key]) : parseInt(data[key]);
-        }
+    // Type conversion for Heart/Liver
+    if (diseaseType !== 'ECG') {
+      for (const key in data) {
+          if (!isNaN(data[key]) && data[key] !== '') {
+              data[key] = data[key].includes('.') ? parseFloat(data[key]) : parseInt(data[key]);
+          }
+      }
     }
     
     onSubmit(data);
+  };
+
+  const getFormTitle = () => {
+    if (diseaseType === 'ECG') return 'ECG Heartbeat Analysis';
+    return `${diseaseType} Disease Assessment`;
+  };
+
+  const renderFields = () => {
+    switch(diseaseType) {
+      case 'Heart':
+        return <HeartFields />;
+      case 'Liver':
+        return <LiverFields />;
+      case 'ECG':
+        return <ECGFields />;
+      default:
+        return <HeartFields />;
+    }
   };
 
   return (
@@ -149,14 +200,14 @@ const DiseaseForm = ({ diseaseType, onSubmit }) => {
       className="glass-card p-8"
     >
       <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-        {diseaseType} Disease Assessment
+        {getFormTitle()}
       </h2>
       
-      {diseaseType === 'Heart' ? <HeartFields /> : <LiverFields />}
+      {renderFields()}
       
       <div className="mt-8">
         <button type="submit" className="btn-primary">
-          Analyze Risk
+          {diseaseType === 'ECG' ? 'Analyze ECG' : 'Analyze Risk'}
         </button>
       </div>
     </motion.form>
@@ -164,3 +215,4 @@ const DiseaseForm = ({ diseaseType, onSubmit }) => {
 };
 
 export default DiseaseForm;
+

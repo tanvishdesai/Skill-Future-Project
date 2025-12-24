@@ -4,7 +4,7 @@ import DiseaseForm from './components/DiseaseForm';
 import ResultCard from './components/ResultCard';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('Heart'); // 'Heart' or 'Liver'
+  const [activeTab, setActiveTab] = useState('Heart'); // 'Heart', 'Liver', or 'ECG'
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,9 +13,12 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const endpoint = activeTab === 'Heart' 
-        ? 'http://localhost:8000/predict/heart'
-        : 'http://localhost:8000/predict/liver';
+      let endpoint = 'http://localhost:8000/predict/heart';
+      if (activeTab === 'Liver') {
+        endpoint = 'http://localhost:8000/predict/liver';
+      } else if (activeTab === 'ECG') {
+        endpoint = 'http://localhost:8000/predict/ecg';
+      }
       
       const response = await axios.post(endpoint, data);
       setResult(response.data);
@@ -42,7 +45,7 @@ function App() {
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
-            MediPredict AI
+            Dr.AI
           </h1>
           <p className="text-lg text-gray-600">
             Advanced Disease Risk Assessment using Machine Learning & Gemini AI
@@ -52,7 +55,7 @@ function App() {
         {/* Tab Switcher */}
         <div className="flex justify-center mb-8">
           <div className="bg-white p-1 rounded-xl shadow-md inline-flex">
-            {['Heart', 'Liver'].map((tab) => (
+            {['Heart', 'Liver', 'ECG'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => switchTab(tab)}
@@ -62,7 +65,7 @@ function App() {
                     : 'text-gray-500 hover:text-indigo-600'
                 }`}
               >
-                {tab} Disease
+                {tab === 'ECG' ? 'ECG Heartbeat' : `${tab} Disease`}
               </button>
             ))}
           </div>
